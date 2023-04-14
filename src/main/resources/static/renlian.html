@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>摄像头拍照</title>
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css"  crossorigin="anonymous">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="css/bootstrap.min.css"  crossorigin="anonymous">
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="js/bootstrap.min.js"  crossorigin="anonymous"></script>
+    <script src="js/jquery-3.3.1.js"></script>
+    <style>
+        .sss{
+            border-radius: 100%;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="sss">
+    <video id="video" width="680" height="320" style="margin-bottom: 30px" controls>
+    </video>
+</div>
+
+<div>
+    <!-- Indicates a successful or positive action -->
+    <button style="margin-left: 250px;position: relative;top: -10px" id="capture" type="button" class="btn btn-success">点击开始进行人脸注册</button>
+</div>
+<canvas style="display: none" id="canvas" width="680" height="320"></canvas>
+<script>
+    //访问用户媒体设备的兼容方法
+    function getUserMedia(constraints, success, error) {
+        if (navigator.mediaDevices.getUserMedia) {
+            //最新的标准API
+            navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
+        } else if (navigator.webkitGetUserMedia) {
+            //webkit核心浏览器
+            navigator.webkitGetUserMedia(constraints,success, error)
+        } else if (navigator.mozGetUserMedia) {
+            //firfox浏览器
+            navigator.mozGetUserMedia(constraints, success, error);
+        } else if (navigator.getUserMedia) {
+            //旧版API
+            navigator.getUserMedia(constraints, success, error);
+        }
+    }
+
+    let video = document.getElementById('video');
+    let canvas = document.getElementById('canvas');
+    let context = canvas.getContext('2d');
+
+    function success(stream) {
+        //兼容webkit核心浏览器
+        let CompatibleURL = window.URL || window.webkitURL;
+        //将视频流设置为video元素的源
+        console.log(stream);
+
+        //video.src = CompatibleURL.createObjectURL(stream);
+        video.srcObject = stream;
+        video.play();
+    }
+
+    function error(error) {
+        console.log(`访问用户媒体设备失败${error.name}, ${error.message}`);
+    }
+
+    if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+        //调用用户媒体设备, 访问摄像头
+        getUserMedia({video : {width: 680, height: 320}}, success, error);
+    } else {
+        alert('不支持访问用户媒体');
+    }
+
+    document.getElementById('capture').addEventListener('click', function () {
+
+
+    })
+    $(function (){
+        $("#capture").click(function () {
+            alert("注册将在7秒内完成，请务必将您的头置于框内！！");
+            context.drawImage(video, 0, 0, 680, 320);
+            var s = canvas.toDataURL();
+            console.log(s)
+            $.post("user/faceRegister",{"img":s},function (data) {
+                alert(data.errorMsg)
+            })
+        })
+        var video=document.getElementById("video");
+        video.controls=false;
+    })
+</script>
+</body>
+</html>

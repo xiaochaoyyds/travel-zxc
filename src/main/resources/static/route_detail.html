@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta id="scale" content="initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+    <title>路线详情</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/route-detail.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/data.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <style type="text/css">
+        *{
+            padding:0;
+            margin:0;
+        }
+        a{
+            text-decoration: none;
+        }
+
+        .form-control{
+            display: inline-block;
+            width: auto;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+
+        .btn{
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #337ab7;
+            border-color: #2e6da4;
+        }
+
+        /*组件主样式*/
+        .overflow-text{
+            display: block;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            opacity:0;
+            clear: both;
+            padding:0 10px;
+            border-radius: 10px;
+            box-sizing: border-box;
+            max-width: 100%;
+            color:#fff;
+            animation:colorchange 3s infinite alternate;
+            -webkit-animation:colorchange 3s infinite alternate; /*Safari and Chrome*/
+        }
+        @keyframes colorchange{
+            0%{
+                color:red;
+            }
+            50%{
+                color:green;
+            }
+            100%{
+                color:#6993f9;
+            }
+        }
+        /*组件主样式*/
+    </style>
+
+</head>
+
+<body>
+<!--引入头部-->
+<div id="header"></div>
+    <!-- 详情 start -->   
+    <div class="wrap">
+        <div class="bread_box">
+            <a href="/">首页</a>
+            <span> &gt;</span>
+            <a href="#">国内游</a><span> &gt;</span>
+            <a href="#">全国-曼谷6-7天自由行 泰国出境旅游 特价往返机票自由行二次确认</a>
+        </div>
+        <div class="prosum_box">
+            <dl class="prosum_left">
+                <dt>
+                    <img alt="" class="big_img" src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m49788843d72171643297ccc033d9288ee.jpg">
+                </dt>
+                <dd id="dd">
+
+                </dd>
+            </dl>
+            <div class="prosum_right">
+               <p class="pros_title" id="rname">【尾单特卖】全国-曼谷6-7天自由行 泰国出境旅游 特价往返机票自由行二次确认</p>
+                <p class="hot" id="routeIntroduce">1-2月出发，网付立享￥1099/2人起！爆款位置有限，抢完即止！</p>
+                <div class="pros_other">
+                    <p >经营商家  ：<span id="sname">蓝桥国旅</span></p>
+                    <p >咨询电话 :<span id="consphone">400-618-9090</span> </p>
+                    <p >地址 ：<span id="address">蓝桥程序员</span> </p>
+                </div>
+                <div class="pros_price">
+                    <p class="price"><strong><span id="price">¥2699.00</span></strong><span>起</span></p>
+                    <p class="collect">
+                        <a class="btn" id="favorite" onclick="addFavorite();"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>
+
+                       <!-- <a  class="btn already" disabled="disabled"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>-->
+                        <span id="favoriteCount">已收藏100次</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-danger" onclick="addPay()">点击支付</button>
+                    </p>
+<!--                    <button  style="background-color:red;width: 100px;height: 50px ;font-size: 10px;margin-top: 10px" id="zhifu"></button>-->
+
+                </div>        
+            </div>
+        </div>
+        <!--评论-->
+        <div style="margin: 0 auto;width: 62%">
+            <button id="stop" class="btn btn-primary">停止</button>
+            <button id="open" class="btn btn-primary">弹</button>
+            <input type="text" class="form-control" name="" id="barrage_content" placeholder="添加弹幕内容"><button class="btn btn-primary" id="submit_barraget">发送</button>
+        </div>
+
+        <div class="you_need_konw">
+            <span>旅游须知</span>
+            <div class="notice">
+                <p>1、旅行社已投保旅行社责任险。建议游客购买旅游意外保险 <br>
+
+                <p>2、旅游者参加打猎、潜水、海边游泳、漂流、滑水、滑雪、滑草、蹦极、跳伞、滑翔、乘热气球、骑马、赛车、攀岩、水疗、水上飞机等属于高风险性游乐项目的，敬请旅游者务必在参加前充分了解项目的安全须知并确保身体状况能适应此类活动；如旅游者不具备较好的身体条件及技能，可能会造成身体伤害。</p>
+
+                <p>3、参加出海活动时，请务必穿着救生设备。参加水上活动应注意自己的身体状况，有心脏病、冠心病、高血压、感冒、发烧和饮酒及餐后不可以参加水上活动及潜水。在海里活动时，严禁触摸海洋中各种鱼类，水母，海胆，珊瑚等海洋生物，避免被其蛰伤。老人和小孩必须有成年人陪同才能参加合适的水上活动。在海边游玩时，注意保管好随身携带的贵重物品。</p>
+
+                <p>4、根据中国海关总署的规定，旅客在境外购买的物品，在进入中国海关时可能需要征收关税。详细内容见《中华人民共和国海关总署公告2010年第54号文件》。</p>
+
+                <p>5、建议出发时行李托运，贵重物品、常用物品、常用药品、御寒衣物等请随身携带，尽量不要托运。行李延误属于不可抗力因素，我司将全力协助客人跟进后续工作，但我司对此不承担任何责任。</p>
+                <p>1、旅行社已投保旅行社责任险。建议游客购买旅游意外保险 <br>
+
+                <p>2、旅游者参加打猎、潜水、海边游泳、漂流、滑水、滑雪、滑草、蹦极、跳伞、滑翔、乘热气球、骑马、赛车、攀岩、水疗、水上飞机等属于高风险性游乐项目的，敬请旅游者务必在参加前充分了解项目的安全须知并确保身体状况能适应此类活动；如旅游者不具备较好的身体条件及技能，可能会造成身体伤害。</p>
+
+                <p>3、参加出海活动时，请务必穿着救生设备。参加水上活动应注意自己的身体状况，有心脏病、冠心病、高血压、感冒、发烧和饮酒及餐后不可以参加水上活动及潜水。在海里活动时，严禁触摸海洋中各种鱼类，水母，海胆，珊瑚等海洋生物，避免被其蛰伤。老人和小孩必须有成年人陪同才能参加合适的水上活动。在海边游玩时，注意保管好随身携带的贵重物品。</p>
+
+                <p>4、根据中国海关总署的规定，旅客在境外购买的物品，在进入中国海关时可能需要征收关税。详细内容见《中华人民共和国海关总署公告2010年第54号文件》。</p>
+
+                <p>5、建议出发时行李托运，贵重物品、常用物品、常用药品、御寒衣物等请随身携带，尽量不要托运。行李延误属于不可抗力因素，我司将全力协助客人跟进后续工作，但我司对此不承担任何责任。</p>
+            </div>           
+        </div>
+    </div>
+    <!-- 详情 end -->
+
+    <!--引入头部-->
+    <div id="footer"></div>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <!--导入布局js，共享header和footer-->
+    <script type="text/javascript" src="js/include.js"></script>
+        <script src="js/getParameter.js"></script>
+    <script type="text/javascript">
+
+        $.fn.barrage = function(opt){
+
+            var _self = $(this);
+
+            var opts = {   //默认参数
+                data : [], //数据列表
+                row : 5,   //显示行数
+                time : 2000, //间隔时间
+                gap : 20,    //每一个的间隙
+                position : 'fixed', //绝对定位
+                direction : 'bottom right', //方向
+                ismoseoverclose : true, //悬浮是否停止
+                height : 30,
+            }
+
+            var settings = $.extend({},opts,opt); //合并参数
+            var M = {},Obj = {};
+            Obj.data = settings.data;
+            M.vertical = settings.direction.split(/\s+/)[0]; //纵向
+            M.horizontal = settings.direction.split(/\s+/)[1]; //横向
+            M.bgColors = ['#edbccc','#edbce7','#c092e4','#9b92e4','#92bae4','#92d9e4','#92e4bc','#a9e492','#d9e492','#e4c892']; //随机背景色数组
+            Obj.arrEle = []; //预计存储dom集合数组
+            M.barrageBox = $('<div id="barrage" style="z-index:999;max-width:100%;position:'+settings.position+';'+M.vertical+':0;'+M.horizontal+':0;"></div>'); //存所有弹幕的盒子
+            M.timer = null;
+            var createView = function(){
+                var randomIndex = Math.floor(Math.random() * M.bgColors.length);
+                var ele = $('<a class="overflow-text" target="_blank" style="height:0;opacity:0;text-align:'+settings.direction.split(/\s+/)[1]+';float:'+settings.direction.split(/\s+/)[1]+';background-color:'+M.bgColors[randomIndex]+'"; href="'+(Obj.data[0].href ? Obj.data[0].href : "javascript:void(0)")+'">'+Obj.data[0].text+'</a>');
+                var str = Obj.data.shift();
+                if(M.vertical  == 'top'){
+                    ele.animate({
+                        'opacity' : 1,
+                        'margin-top' : settings.gap,
+                        'height' : settings.height,
+                        'line-height' : settings.height+'px',
+                    },1000)
+                    M.barrageBox.prepend(ele);
+                }else{
+                    ele.animate({
+                        'opacity' : 1,
+                        'margin-bottom' : settings.gap,
+                        'height' : settings.height,
+                        'line-height' : settings.height+'px'
+                    },1000)
+                    M.barrageBox.append(ele);
+                }
+                Obj.data.push(str);
+
+                if(M.barrageBox.children().length > settings.row){
+
+                    M.barrageBox.children().eq(0).animate({
+                        'opacity' : 0,
+                    },300,function(){
+                        $(this).css({
+                            'margin' : 0,
+                        }).remove();
+                    })
+                }
+            }
+            M.mouseClose = function(){
+                settings.ismoseoverclose && (function(){
+
+                    M.barrageBox.mouseover(function(){
+                        clearInterval(M.timer);
+                        M.timer = null;
+                    }).mouseout(function(){
+                        M.timer = setInterval(function(){ //循环
+                            createView();
+                        },settings.time)
+                    })
+
+                })()
+            }
+            Obj.close = function(){
+                M.barrageBox.remove();
+                clearInterval(M.timer);
+                M.timer = null;
+            }
+            Obj.start = function(){
+                if(M.timer) return;
+                _self.append(M.barrageBox); //把弹幕盒子放到页面中
+                createView(); //创建试图并开始动画
+                M.timer = setInterval(function(){ //循环
+                    createView();
+                },settings.time)
+                M.mouseClose();
+            }
+
+            return Obj;
+        }
+
+        //从数据库里面获取数据出来封装到集合
+        var comments = [
+            {href : '',text : '这儿超好玩儿！！！！'}
+        ];
+        //获取线路id
+        let rid = getParameter("rid");
+        $.post("comment/showComment",{"rid":rid},function (data) {
+            //遍历从后台获取到的评论集合，并且把他们添加到数组里面
+            for (let i = 0; i < data.length; i++) {
+                Obj.data.unshift(data[i]);
+            }
+        });
+
+        // 弹幕数据初始化
+        var Obj = $("body").barrage({
+            data : comments,//data, //数据列表
+            row : 6,   //显示行数
+            time : 2000, //间隔时间
+            gap : 20,    //每一个的间隙
+            position : 'fixed', //绝对定位
+            direction : 'bottom right', //方向
+            ismoseoverclose : true, //悬浮是否停止
+            height : 30, //设置单个div的高度
+        });
+        Obj.start();
+        //添加评论
+        $("#submit_barraget").click(function(){
+            //获取用户评论内容
+            let content = $("#barrage_content").val();
+            //获取线路id
+            let parameter = getParameter("rid");
+            //发送异步请求给后台处理评论
+            $.post("comment/sendComment",{rid:parameter,content:content},function (data) {
+                //alert(data.flag);
+                console.log(data);
+                if(data.flag){
+                    //把评论添加到数组
+                    //此格式与dataa.js的数据格式必须一致
+                    var addVal = {
+                        href : 'https://www.lanqiao.org/',
+                        text : content
+                    }
+                    alert("评论成功");
+                    Obj.data.unshift(addVal);
+                    //清除弹幕框
+                    $("#barrage_content").val("")
+                }else {
+                    alert(data.errorMsg);
+                    location.href="login.html"
+                }
+
+            })
+        })
+
+        $("#open").click(function(){
+            Obj.start();
+        })
+        $("#stop").click(function(){
+            Obj.close();
+        })
+
+
+        $(document).ready(function() {
+                goImg()
+            //自动播放
+            // var timer = setInterval("auto_play()", 5000);
+        });
+        function goImg(){
+            //焦点图效果
+            //点击图片切换图片
+            $('.little_img').on('mousemove', function() {
+                $('.little_img').removeClass('cur_img');
+                var big_pic = $(this).data('bigpic');
+                $('.big_img').attr('src', big_pic);
+                $(this).addClass('cur_img');
+            });
+            //上下切换
+            var picindex = 0;
+            var nextindex = 4;
+            $('.down_img').on('click',function(){
+                var num = $('.little_img').length;
+                if((nextindex + 1) <= num){
+                    $('.little_img:eq('+picindex+')').hide();
+                    $('.little_img:eq('+nextindex+')').show();
+                    picindex = picindex + 1;
+                    nextindex = nextindex + 1;
+                }
+            });
+            $('.up_img').on('click',function(){
+                var num = $('.little_img').length;
+                if(picindex > 0){
+                    $('.little_img:eq('+(nextindex-1)+')').hide();
+                    $('.little_img:eq('+(picindex-1)+')').show();
+                    picindex = picindex - 1;
+                    nextindex = nextindex - 1;
+                }
+            });
+        }
+        $(function () {
+
+            //查询路线信息并显示在页面
+
+            var rid= getParameter("rid");
+            $.get("route/findOne",{rid:rid},function (route) {
+                //   alert(route.rname)
+                console.log(route)
+                $("#rname").html(route.rname)
+                $("#routeIntroduce").html(route.routeIntroduce);
+                $("#price").html("¥"+route.price);
+                $("#sname").html(route.seller.sname);
+                $("#consphone").html(route.seller. consphone);
+                $("#address").html(route.seller.address);
+                $("#favoriteCount").html("已收藏"+route.count+"次")
+                var ddstr='<a class="up_img up_img_disable"></a>';
+                for (var i = 0; i <route.routeImgList.length; i++) {
+                    var astr;
+                    if (i>=4){
+                         astr=' <a title="" class="little_img" data-bigpic="'+route.routeImgList[i].bigPic+'" style="display:none;">\n' +
+                            '                       <img src="'+route.routeImgList[i].smallPic+'">\n' +
+                            '                    </a>';
+                    }else {
+                        astr=' <a title="" class="little_img" data-bigpic="'+route.routeImgList[i].bigPic+'" >\n' +
+                            '                       <img src="'+route.routeImgList[i].smallPic+'">\n' +
+                            '                    </a>';
+                    }
+
+                        ddstr+=astr
+                }
+                ddstr+='<a class="down_img down_img_disable" style="margin-bottom: 0;"></a>'
+                $("#dd").html(ddstr)
+                goImg();
+            })
+
+        })
+            $(function () {
+                 var  rid1=getParameter("rid")
+                $.get("route/isFavorite",{rid:rid1},function (flag) {
+                        if (flag){
+                            $("#favorite").addClass("already")
+                            $("#favorite").attr("disabled","disabled")
+                            $("#favorite").removeAttr("onclick")
+                        }else {
+
+                        }
+                })
+            })
+
+    //自动轮播方法
+    function auto_play() {
+        var cur_index = $('.prosum_left dd').find('a.cur_img').index();
+        cur_index = cur_index - 1;
+        var num = $('.little_img').length;
+        var max_index = 3;
+        if ((num - 1) < 3) {
+            max_index = num - 1;
+        }
+        if (cur_index < max_index) {
+            var next_index = cur_index + 1;
+            var big_pic = $('.little_img:eq(' + next_index + ')').data('bigpic');
+            $('.little_img').removeClass('cur_img');
+            $('.little_img:eq(' + next_index + ')').addClass('cur_img');
+            $('.big_img').attr('src', big_pic);
+        } else {
+            var big_pic = $('.little_img:eq(0)').data('bigpic');
+            $('.little_img').removeClass('cur_img');
+            $('.little_img:eq(0)').addClass('cur_img');
+            $('.big_img').attr('src', big_pic);
+        }
+    }
+    //添加收藏
+    function addFavorite() {
+            var parameter = getParameter("rid");
+        $.get("user/find",{},function (user) {
+            if (user){
+                $.get("route/addFavorite",{rid:parameter},function () {
+                    location.reload();
+                })
+            }else {
+                alert("您还未登陆哦，请登录~")
+                location.href="login.html"
+            }
+
+        })
+    }
+    //添加订单
+    function addPay() {
+        var parameter = getParameter("rid");
+        $.get("user/find",{},function (user) {
+            if (user){
+                location.href = "money/ply?rid="+parameter;
+                // $.get("money/ply",{rid:parameter},function () {
+                // })
+            }else {
+                alert("您未都登陆，请登录！")
+                location.href="login.html"
+            }
+
+        })
+    }
+
+    </script>
+
+</body>
+
+</html>

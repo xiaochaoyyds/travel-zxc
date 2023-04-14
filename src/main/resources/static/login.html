@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>蓝桥旅游网-登录</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>-->
+<!--      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>-->
+<!--    <![endif]&ndash;&gt;-->
+      <!--导入angularJS文件-->
+    <script src="js/angular.min.js"></script>
+	<!--导入jquery-->
+	<script src="js/jquery-3.3.1.js"></script>
+
+	<script>
+		$(function () {
+			$("#btn_sub").click(function () {
+				$.post("user/login",$("#loginForm").serialize(),function (data) {
+						if (data.flag){
+							location.href="index.html"
+						}else {
+							$("#errorMsg").html(data.errorMsg)
+						}
+				})
+			})
+			
+		})
+	</script>
+
+
+</head>
+
+<body>
+<!--引入头部-->
+<div id="header"></div>
+    <!-- 头部 end -->
+    <section id="login_wrap">
+        <div class="fullscreen-bg" style="background: url(http://niuzi12138.oss-cn-chengdu.aliyuncs.com/t.jpg);height: 532px;">
+			<div>
+				<div class="move_div">
+					<div class="hr_div">
+							
+					</div>
+				</div>
+				<video muted id="video" height="500" width="500" style="z-index: 999;margin-left: 200px;"></video>
+				<canvas class="canvas"  width="780" height="500" id="canvas" style="display: none;"></canvas>
+			</div>
+
+        </div>
+        <div class="login-box">
+        	<div class="title">
+        		<img src="http://niuzi12138.oss-cn-chengdu.aliyuncs.com/logo.jpg" style="height: 56px;width: 65px" alt="">
+        		<span>欢迎登录蓝桥旅游账户</span>
+        	</div>
+        	<div class="login_inner">
+				
+				<!--登录错误提示消息-->
+        		<div id="errorMsg" class="alert alert-danger" ></div>
+				<form id="loginForm" action="" method="post" accept-charset="utf-8">
+        			<input type="hidden" name="action" value="login"/>
+					<input name="username" id="name" type="text" placeholder="请输入账号" autocomplete="off">
+        			<input name="password" type="text" placeholder="请输入密码" autocomplete="off">
+        			<div class="verify" style="width: 280px">
+<!--					<input name="check" type="text" style="padding-right: 5px" id="check" placeholder="请输入验证码" autocomplete="off">-->
+<!--					<span id="disable_none"><input style="width: 120px;padding-right: 0px" type="button" value="点击发送验证码" id="yzm_btn" ></span>-->
+						<script>
+							$(function () {
+								$("#yzm_btn").on('click',()=>{
+									$("#yzm_btn").addClass("not_btn");
+									$("#yzm_btn").attr("disabled",true);
+									$("#disable_none").attr("disabled",true);
+									console.log(123);
+									var i = 60;
+									var timer =  setInterval(()=>{
+
+										$("#yzm_btn").val(i);
+										i--;
+										if(i==-1){
+											$("#yzm_btn").removeClass("not_btn");
+											$("#yzm_btn").attr("disabled",false);
+											$("#yzm_btn").val("点击获取验证码");
+											clearInterval(timer);
+										}
+									},1000);
+									var name = $("#name").val();
+
+									$.get("user/checkWord",{"username":name},function (data) {
+
+									})
+								})
+							})
+						</script>
+					<script type="text/javascript">
+						//图片点击事件
+						function changeCheckCode(img) {
+							img.src="checkCode?"+new Date().getTime();
+						}
+					</script>
+			</div>
+			<div class="submit_btn">
+        				<button type="button" id="btn_sub">登录</button>
+        				<div class="auto_login">
+							<a  href="javascript:getMedia();">人脸登录</a>
+        				</div>
+				<script>
+					var vd = document.querySelector("#voide");
+					vd.controls=false;
+					function getMedia() {
+						$("#video").prop("controls","controls")
+						$("#errorMsg").html("请面向镜头")
+						let constraints = {
+							video: {width: 780, height: 500},
+							audio: true
+						};
+//获得video摄像头区域controls="controls"
+						let video = document.getElementById("video");
+//这里介绍新的方法，返回一个 Promise对象
+// 这个Promise对象返回成功后的回调函数带一个 MediaStream 对象作为其参数
+// then()是Promise对象里的方法
+// then()方法是异步执行，当then()前的方法执行完后再执行then()内部的程序
+// 避免数据没有获取到
+						let promise = navigator.mediaDevices.getUserMedia(constraints);
+						promise.then(function (MediaStream) {
+							video.srcObject = MediaStream;
+							video.play();
+							var move_div = document.querySelector('.move_div');
+							move_div.style.display = 'block';
+							
+						});
+							setTimeout(function () {
+								setTimeout(takePhoto,2000);
+							},2000)
+					}
+					function takePhoto() {
+//获得Canvas对象						let video = document.getElementById("video");
+						let canvas = document.getElementById("canvas");
+						let ctx = canvas.getContext('2d');
+						ctx.drawImage(video, 0, 0, 780, 500);
+						var s = canvas.toDataURL();
+						//alert(s);
+						$.post("user/faceLogin",{"img":s},function (data) {
+							if (data.flag){
+								location.href="index.html"
+							}else {
+								$("#errorMsg").html(data.errorMsg)
+							}
+						})
+
+					}
+				
+				
+				</script>
+        			</div>        			       		
+        		</form>
+        		<div class="reg">没有账户？<a href="register.html">立即注册</a></div>
+        	</div>
+        </div>
+    </section>
+    <!--引入尾部-->
+    <div id="footer"></div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <!--导入布局js，共享header和footer-->
+    <script type="text/javascript" src="js/include.js"></script>
+</body>
+
+</html>

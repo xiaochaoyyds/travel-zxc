@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" >
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css" >
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="js/bootstrap.min.js" ></script>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script>
+        function pay(out_trade_no){
+            //支付方法
+            location.href = "money/ply2?out_trade_no="+out_trade_no;
+
+        }
+        $(function () {
+            $.post("user/indent",{},function (data1) {
+                var data =JSON.parse(data1)
+                console.log(data)
+                for (let i = 0; i < data.length; i++) {
+                    var str = '<tr>';
+                    str+='<td>'+data[i].out_trade_no+'</td>' +
+                        '<td>'+data[i].name+'</td>' +
+                        '<td>'+data[i].money+'</td>' +
+                        '<td>'+data[i].ispay+'</td>';
+                    if(data[i].ispay=="否"){
+                        //添加一个按钮
+                        str += '<td><button type="button" onclick="pay(\''+data[i].out_trade_no+'\')" class="btn btn-danger">点击支付</button></td>td>';
+                    }else {
+                        str += '<td>'+"无"+'</td>' + '</tr>';
+                    }
+
+                    $("#tab").append(str);
+                }
+
+            })
+        })
+    </script>
+</head>
+<body>
+    <h1 align="center">我的订单</h1>
+    <div class="table-responsive">
+        <table id="tab" class="table">
+            <tr>
+                <td>订单编号</td>
+                <td>线路名称</td>
+                <td>价格</td>
+                <td>是否支付</td>
+                <td>状态</td>
+            </tr>
+<!--            <tr>-->
+<!--                <td>111111</td>-->
+<!--                <td>宝马</td>-->
+<!--                <td>9999999￥</td>-->
+<!--                <td>已支付</td>-->
+<!--                <td>无</td>-->
+<!--            </tr>-->
+        </table>
+    </div>
+
+</body>
+</html>

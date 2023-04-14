@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/bootstrap.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/jquery-3.3.1.js"></script>
+</head>
+<body>
+<h1 style="text-align: center">查快递</h1>
+<div class="input-group" style="width: 650px;margin: 0 auto">
+    <input type="text" class="form-control" placeholder="请输入快递单号" aria-describedby="basic-addon2" id="kd">
+    <span class="input-group-addon" id="basic-addon2"><a onclick="cha()" href="javascript:void(0)" style="text-decoration:none">点击查询</a></span>
+</div>
+<div style="width: 650px;margin: 0 auto;margin-top: 50px">
+    <table class="table table-striped" id="tables" >
+        <tr>
+            <th>时间</th>
+            <th>状态</th>
+        </tr>
+
+    </table>
+</div>
+<script>
+
+   function cha() {
+       var kddh = $("#kd").val();
+       $.post("user/select",{"kddh":kddh},function (data1){
+           console.log("返回数据："+data1)
+           console.log(data1.result)
+           var data=JSON.parse(data1)
+           const list = data.result.list;	//[{11,22},{11,22}]
+           const tables = $("#tables");
+           for (var i = 0; i < list.length; i++) {
+               var str = list[i];
+               var tr='<tr><td>'+str.time+'</td><td>'+str.status+'</td></tr>';
+               tables.append(tr)
+           }
+       })
+   }
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>疫情地图展示</title>
+    <style>
+        #myEcharts {
+            width: 800px;
+            height: 500px;
+            border: solid 1px red;
+            margin: 0 auto;
+        }
+    </style>
+    <script src="js/jquery.js"></script>
+    <!-- 引入 echarts.js -->
+    <script type="text/javascript" src="js/echarts-all-3.js"></script>
+    <!--引入中国的地图数据js文件，引入后会自动注册地图名字和数据-->
+    <!--<script src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js?v=1598903772045"></script>
+
+
+</head>
+
+<body>
+<!--为echarts准备一个dom容器-->
+<div id="myEcharts"></div>
+<script>
+    //初始化echarts实例
+    var myChart = echarts.init(document.getElementById('myEcharts'));
+    // 指定图表的配置项和数据
+    option = {
+        title: {
+            text: '中国疫情图',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['中国疫情图']
+        },
+        visualMap: {
+            type: 'piecewise',
+            pieces: [
+                { min: 1000, max: 1000000, label: '大于等于1000人', color: '#372a28' },
+                { min: 500, max: 999, label: '确诊500-999人', color: '#4e160f' },
+                { min: 100, max: 499, label: '确诊100-499人', color: '#974236' },
+                { min: 10, max: 99, label: '确诊10-99人', color: '#ee7263' },
+                { min: 1, max: 9, label: '确诊1-9人', color: '#f5bba7' },
+            ],
+            color: ['#E0022B', '#E09107', '#A3E00B']
+        },
+        toolbox: {
+            show: true,
+            orient: 'vertical',
+            left: 'right',
+            top: 'center',
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        roamController: {
+            show: true,
+            left: 'right',
+            mapTypeControl: {
+                'china': true
+            }
+        },
+        series: [
+            {
+                name: '确诊数',
+                type: 'map',
+                mapType: 'china',
+                roam: false,
+                label: {
+                    show: true,
+                    color: 'rgb(255, 255, 255)'
+                },
+                data: [
+
+                ]
+            }
+        ]
+    };
+
+    $.ajax({
+        url: "https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5",
+        dataType: "jsonp", //jsonp做跨域访问
+        success: function (res) {
+            let dataBefore = JSON.parse(res.data).areaTree[0];
+            let dataAfter = dataBefore.children.map(province => ({//接受到的数据进行数据格式转换...
+                name: province.name,
+                value: province.total.confirm,
+            }))
+            option.series[0].data = dataAfter;
+
+            myChart.setOption(option); //使用指定的配置项和数据显示图表
+        }
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>蓝桥旅游-搜索</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" href="css/search.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/getParameter.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script>
+
+
+    <script>
+        $(function () {
+               var cid = getParameter("cid");
+               console.log("cid:"+cid)
+               var rname = getParameter("rname");
+               console.log("rname:"+rname)
+               if (rname){
+                   rname=window.decodeURIComponent(rname);
+               }
+                load(cid,null,rname);
+                //获取天气
+               function fff(city){
+                   $.post("comment/getWeather",{city:city},function (data) {
+                        data = JSON.parse(data);
+                       $("#area").html(data.city);//城市名
+                       console.log("city:"+data.city)
+                       $("#quality").html(data.aqi);//空气质量
+                       console.log("aqi:"+data.aqi)
+                       $("#temperature").html(data.temp);//气温
+                       console.log("temp:"+data.temp)
+                       $("#sd").html(data.humidity);//湿度
+                       $("#weather").html(data.weather);//天气状况
+                       $("#weather_pic").prop("src","img/"+data.img+".png");//天气图标
+                       $("#wind_direction").html(data.winddirect);//风向
+                       let futureWeather = data.futureWeather;//未来七天天气状况
+
+                       // let fu = $(".futureWeather img");
+                       // for (let i = 0; i < fu.length; i++) {
+                       //     alert(i);
+                       //     fu[i].remove();
+                       // }
+                       var str = '';
+                       for (let i = 0; i < futureWeather.length; i++) {
+                           //alert(data.futureWeather[i]);
+                           str += '<img style="width: 14%;float: left" src="img/'+data.futureWeather[i]+'.png"/>';
+
+                       }
+                       $("#futureWeather").html(str);
+
+                   });
+               }
+
+            function  getQueryString(name) {
+                var  reg =  new  RegExp( "(^|&)"  + name +  "=([^&]*)(&|$)" ,  "i" );
+                var  r = window.location.search.substr(1).match(reg);
+                if  ( r !=  null  ){
+                    return  decodeURI(r[2]);
+                } else {
+                    return  null ;
+                }
+            }
+            //用户输入城市点击以后
+               $("#see").click(function () {
+                   let city = $("#city").val();
+                    fff(city);
+               });
+
+               var parameter = getQueryString("rname");
+               if(parameter==null){
+                   parameter="泸州";
+               }
+               //alert(parameter);
+               fff(parameter);
+
+            let parameter1 = getParameter("city");
+            if (parameter1 != null && parameter1 != "") {
+                if(confirm("您要搜索的城市是：" + parameter1)){
+                    load(5,1,parameter1);
+                }
+            }
+
+
+        })
+        function load(cid,currentPage,rname) {
+            $.post("route/pageQuery",{cid:cid,currentPage:currentPage,rname:rname},function (pb) {
+                $("#totalPage").html(pb.totalPage);
+                $("#totalCount").html(pb.totalCount);
+                var lis="";
+                var firstPage='<li onclick="javascript:load('+cid+',1,'+rname+')"><a href="javascript:void(0)">首页</a></li>'
+                var befNum=pb.currentPage-1;
+                if (befNum<=0){
+                    befNum=1
+                }
+                var befPage='<li class="threeword"  onclick="load('+cid+','+befNum+',\''+rname+'\')"><a href="javascript:void(0)">上一页</a></li>'
+                lis+=firstPage;
+                lis+=befPage;
+                var begin;
+                var end;
+                if (pb.totalPage<10){
+                    begin=1;
+                    end=pb.totalPage;
+                }else {
+                    begin=pb.currentPage-5;
+                    end=pb.currentPage+4;
+                    if (begin<1){
+                        begin=1;
+                        end=begin+9;
+                    }
+                    if (end>pb.totalPage){
+                        end=pb.totalPage;
+                        begin=end-1;
+                    }
+                }
+                for (var i = begin; i <=end; i++) {
+                    var li;
+                    if (pb.currentPage==i){
+                        li='<li class="curPage" onclick="load('+cid+','+i+',\''+rname+'\')"><a href="javascript:void(0)">'+i+'</a></li>'
+                    }else {
+                        li='<li onclick="load('+cid+','+i+',\''+rname+'\')"><a href="javascript:void(0)">'+i+'</a></li>'
+                    }
+
+                    lis+=li;
+                }
+               /* for (var i = 1; i <=pb.totalPage; i++) {
+                    var li;
+                    if (pb.currentPage==i){
+                         li='<li class="curPage" onclick="load('+cid+','+i+')"><a href="javascript:void(0)">'+i+'</a></li>'
+                    }else {
+                        li='<li onclick="load('+cid+','+i+')"><a href="javascript:void(0)">'+i+'</a></li>'
+                    }
+
+                    lis+=li;
+                }*/
+                var lastPage='<li class="threeword" onclick="load('+cid+','+pb.totalPage+',\''+rname+'\')"><a href="javascript:void(0)">末页</a></li>';
+                var preNum=pb.currentPage+1;
+                var prePage='<li class="threeword" onclick="load('+cid+','+preNum+',\''+rname+'\')"><a href="javascript:void(0)">下一页</a></li>'
+                lis+=prePage;
+                lis+=lastPage;
+                $("#pageNum").html(lis);
+                var route=$("#route_lis");
+                var route_lis="";
+                for (var i = 0; i <pb.list.length; i++) {
+                    var routee=pb.list[i];
+                    var li='<li>\n' +
+                        '                            <div class="img"><img src="'+routee.rimage+'" style="width: 299px;"></div>\n' +
+                        '                            <div class="text1">\n' +
+                        '                                <p>'+routee.rname+'</p>\n' +
+                        '                                <br/>\n' +
+                        '                                <p>'+routee.routeIntroduce+'</p>\n' +
+                        '                            </div>\n' +
+                        '                            <div class="price">\n' +
+                        '                                <p class="price_num">\n' +
+                        '                                    <span>&yen;</span>\n' +
+                        '                                    <span>'+routee.price+'</span>\n' +
+                        '                                    <span>起</span>\n' +
+                        '                                </p>\n' +
+                        '                                <p><a href="route_detail.html?rid='+routee.rid+'">查看详情</a></p>\n' +
+                        '                            </div>\n' +
+                        '                        </li>';
+                    route_lis+=li;
+                }
+                route.html(route_lis);
+                window.scrollTo(0,0)
+            })
+        }
+    </script>
+</head>
+<body>
+<!--引入头部-->
+<div id="header"></div>
+    <div class="page_one">
+        <div class="contant">
+            <div class="crumbs">
+                <img src="data:image/png;base64,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" alt="">
+                <p>蓝桥旅行<span>搜索结果</span></p>
+            </div>
+            <div class="xinxi clearfix">
+                <div class="left">
+                    <div class="header">
+                        <span>商品信息</span>
+                        <span class="jg">价格</span>
+                    </div>
+                    <ul id="route_lis">
+                        
+                    </ul>
+                    <div class="page_num_inf">
+                        <i></i> 共
+                        <span id="totalPage"></span>页<span id="totalCount"></span>条
+                    </div>
+                    <div class="pageNum">
+                        <ul id="pageNum">
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="top">
+                        <input style="width: 170px;float: left" id="city" type="text" class="form-control" placeholder="输入城市查看天气信息">
+<!--                        <div class="hot">HOT</div>-->
+                        <input style="float: left" id="see" class="btn btn-default" type="button" value="查看">
+                    </div>
+                    <ul>
+                        <li>
+                            <div >
+                                <img id="weather_pic" style="width: 30%;float: left" src="http://app1.showapi.com/weather/icon/night/00.png"/>
+                            </div>
+                            <div id="area" style="float: right;color: #0f0f0f;font-size: 20px;padding-top: 10px;padding-right: 60px;font-size: 23px">城市</div>
+                        </li>
+<!--                        <div style="float: left;color: #0f0f0f;font-size: 20px;padding-top: 20px;padding-right: 60px;padding-left: 5px">湿度</div>-->
+                        <table  style="width: 100%;margin-top: 30px">
+                            <tr>
+                                <th style="font-size: 30px;color: #2aabd2">湿&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;度:</th>
+                                <td style="font-size: 20px" align="left" id="sd"></td>
+                            </tr>
+                            <tr>
+                                <th style="font-size: 30px;color: #d58512">气&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;温:</th>
+                                <td style="font-size: 20px" id="temperature"></td>
+                            </tr>
+                            <tr>
+                                <th style="font-size: 30px;color: #8d8d8e">风&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向:</th>
+                                <td style="font-size: 16px" id="wind_direction"></td>
+                            </tr>
+                            <tr>
+                                <th style="font-size: 30px;color: #c9e2b3">空气质量:&nbsp;</th>
+                                <td style="font-size: 20px" id="quality"></td>
+                            </tr>
+                            <tr>
+                                <th style="font-size: 30px;color: #66afe9">天气状况:</th>
+                                <td style="font-size: 18px" id="weather"></td>
+                            </tr>
+                            <tr>
+                                <th style="font-size: 23px;color: #6993f9;padding-top: 5px" colspan="2" align="center">未来七天天气状况</th>
+                            </tr>
+                            <tr>
+                                <td id="futureWeather" colspan="2" style="padding-top: 12px">
+                                </td>
+                            </tr>
+
+                        </table>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--引入头部-->
+    <div id="footer"></div>
+    <!--导入布局js，共享header和footer-->
+    <script type="text/javascript" src="js/include.js"></script>
+</body>
+
+</html>

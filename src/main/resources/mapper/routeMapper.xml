@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.travel.dao.RouteDao">
+
+
+    <select id="findIndex" resultType="com.baidu.travel.domain.Route">
+        select * from tab_route LIMIT 0,24
+    </select>
+
+
+
+    <select id="findOne" resultType="com.baidu.travel.domain.Route">
+        select * from tab_route where rid=#{rid}
+
+    </select>
+    <select id="findTotalCount" resultType="java.lang.Integer">
+        SELECT count(*) FROM `tab_route`
+        <where>
+            cid =#{cid}
+            <if test="rname != null">
+                and rname like "%"#{rname}"%"
+            </if>
+        </where>
+    </select>
+    <select id="findByPage" resultType="com.baidu.travel.domain.Route">
+        SELECT * FROM `tab_route`
+        <where>
+            cid =#{cid}
+            <if test="rname != null">
+                and rname like "%"#{rname}"%"
+            </if>
+            limit #{start},#{pageSize}
+        </where>
+    </select>
+    <select id="favoritePageQuery" resultType="com.baidu.travel.domain.Route">
+        select a.*,b.count as fav_count from tab_route   a ,
+            (select count(rid) count ,rid from tab_favorite  group by rid order by count desc) as b
+            <where>
+                a.rid = b.rid
+                <if test="rname != null">
+                    and rname like "%"#{rname}"%"
+                </if>
+                <if test="eprice != null and sprice != null">
+                    and price between #{sprice} and #{eprice}
+                </if>
+                order by b.count desc
+                limit #{start},#{pageSize}
+            </where>
+
+    </select>
+    <select id="findTotalCount1" resultType="java.lang.Integer">
+        SELECT count(*) FROM `tab_route`
+        <where>
+                 rname like "%"#{rname}"%"
+        </where>
+    </select>
+    <select id="findByPage1" resultType="com.baidu.travel.domain.Route">
+        select a.*,b.count as fav_count from tab_route   a ,
+        (select count(rid) count ,rid from tab_favorite  group by rid order by count desc) as b
+        <where>
+            a.rid = b.rid
+            <if test="rname != null">
+                and rname like "%"#{rname}"%"
+            </if>
+            <if test="eprice != null and sprice != null">
+                and price between #{sprice} and #{eprice}
+            </if>
+            limit #{start},#{pageSize}
+        </where>
+
+    </select>
+</mapper>

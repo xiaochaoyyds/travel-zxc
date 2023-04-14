@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.travel.dao.UserDao">
+    <insert id="save" parameterType="com.baidu.travel.domain.User">
+        insert into
+            tab_user(username,password,name,birthday,sex,telephone,email)
+        value  (#{username},#{password},#{name},#{birthday},#{sex},#{telephone},#{email})
+    </insert>
+
+    <update id="updateStatus" parameterType="com.baidu.travel.domain.User">
+        update tab_user set status='Y' where uid=#{uid}
+    </update>
+
+    <select id="FindByUsername" resultType="com.baidu.travel.domain.User">
+        select * from tab_user where username=#{username}
+    </select>
+
+    <select id="FindByCode" resultType="com.baidu.travel.domain.User">
+        select * from tab_user where code=#{code}
+    </select>
+
+    <select id="FindUsernameAndPassword" resultType="com.baidu.travel.domain.User">
+        select * from tab_user where username=#{username} and password=#{password}
+    </select>
+
+
+</mapper>

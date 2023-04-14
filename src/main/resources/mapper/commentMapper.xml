@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.travel.dao.CommentDao">
+
+    <insert id="addComment" parameterType="com.baidu.travel.domain.Comment">
+        insert into tab_comment values(null,#{uid},#{rid},#{time},#{content})
+    </insert>
+    <select id="getCommentByRid" resultType="com.baidu.travel.domain.Comment">
+        select * from tab_comment where rid=#{rid}
+    </select>
+</mapper>

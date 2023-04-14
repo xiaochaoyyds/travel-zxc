@@ -1,0 +1,121 @@
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>收藏排行榜</title>
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" type="text/css" href="css/ranking-list.css">
+        <script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+        <script>
+            $(function () {
+                load(1,"","0","999999999");
+            })
+            function load(currentPage,rname,Sprice,Eprice) {
+                $.post("route/FavoriteQuery",{"currentPage":currentPage,"rname":rname,"Sprice":Sprice,"Eprice":Eprice},function (data) {
+                    console.log(data);
+                    var lis="";
+                    var firstPage='<li onclick="load(1,\''+rname+'\','+Sprice+','+Eprice+')"><a href="javascript:void(0)">首页</a></li>';
+                    var befNum=data.currentPage-1;
+                    if (befNum<=0){
+                        befNum=1;
+                    }
+                    var befPage='<li class="threeword" onclick="load('+befNum+',\''+rname+'\','+Sprice+','+Eprice+')"><a href="javascript:void(0)">上一页</a></li>';
+                    lis+=firstPage;
+                    lis+=befPage;
+                    var begin;
+                    var end;
+                    if (data.totalPage<10){
+                        begin=1;
+                        end=data.totalPage;
+                    }else {
+                        begin=data.currentPage-5;
+                        end=data.currentPage+4;
+                        if (begin<1){
+                            begin=1;
+                            end=begin+9;
+                        }
+                        if (end>data.totalPage){
+                            end=data.totalPage;
+                            begin=end-1;
+                        }
+                    }
+                    for (var i = begin; i <=end; i++) {
+                        if (data.currentPage==i){
+                            li='<li class="curPage" onclick="load('+i+',\''+rname+'\','+Sprice+','+Eprice+')"><a href="javascript:void(0)">'+i+'</a></li>';
+                        }else {
+                            li='<li onclick="load('+i+',\''+rname+'\','+Sprice+','+Eprice+')"><a href="javascript:void(0)">'+i+'</a></li>';
+                        }
+                        lis+=li;
+                    }
+                    var lastPage='<li class="threeword" onclick="load('+data.totalPage+',\''+rname+'\','+Sprice+','+Eprice+')"><a href="javascript:void(0)">末页</a></li>';
+                    var preNum=data.currentPage+1;
+                    var prePage='<li class="threeword" onclick="load('+preNum+',\''+rname+'\','+Sprice+','+Eprice+')"><a href="javascript:void(0)">下一页</a></li>';
+                    lis+=prePage;
+                    lis+=lastPage;
+                    //alert(lis);
+                    $("#pageNum").html(lis);
+                    var route_lis = $("#route_lis");
+                    var rls="";
+                    for (let i = 0; i < data.list.length; i++) {
+                        var routee=data.list[i];
+                        var li='<li>\n' +
+            '                        <span class="num two">'+((currentPage-1)*8+i+1)+'</span>\n' +
+            '                         <a href="route_detail.html?rid='+routee.rid+'"><img src="'+routee.rimage+'" alt=""></a>\n' +
+            '                        <h4><a href="route_detail.html?rid='+routee.rid+'">'+routee.rname+'</a></h4>\n' +
+            '                        <p>\n' +
+            '                            <b class="price">&yen;<span>'+routee.price+'</span>起</b>\n' +
+            '                            <span class="shouchang">收藏次数'+routee.count+'</span>\n' +
+            '                        </p>\n' +
+            '                    </li>';
+                        rls+=li;
+                    }
+                    //alert(rls);
+                    route_lis.html(rls);
+                    window.scrollTo(0,0);
+                    })
+            }
+            function aa() {
+                console.log(111)
+                var val = $("#rname").val();
+                var val1 = $("#Sprice").val();
+                var val2 = $("#Eprice").val();
+                if(val1=="" && val2==""){
+                    load(1,val,0,999999999);
+                }else {
+                    load(1,val,val1,val2);
+                }
+            }
+        </script>
+    </head>
+    <body>
+    <!--引入头部-->
+    <div id="header"></div>
+        <div class="contant">
+            <div class="shaixuan">
+                <span>线路名称</span>
+                <input type="text" id="rname">
+                <span>金额</span>
+                <input type="text" id="Sprice">~<input type="text" id="Eprice">
+                <button id="search_btn" onclick="aa()">搜索</button>
+            </div>
+            <div class="list clearfix">
+
+                <ul id="route_lis">
+
+
+                </ul>
+            </div>
+            <div class="pageNum">
+                <ul id="pageNum">
+
+
+                </ul>
+            </div>
+        </div>
+    	
+         <!--导入底部-->
+   		 <div id="footer"></div>
+    <!--导入布局js，共享header和footer-->
+    <script type="text/javascript" src="js/include.js"></script>
+    </body>
+</html>

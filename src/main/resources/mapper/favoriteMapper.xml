@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.travel.dao.FavoriteDao">
+
+
+    <insert id="addFavorite" parameterType="com.baidu.travel.domain.Favorite">
+        insert into tab_favorite values(#{rid},DATE(now()),#{uid})
+    </insert>
+    <select id="findCountByUid" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM tab_user u LEFT JOIN tab_favorite f ON u.uid = f.uid LEFT JOIN tab_route tr ON f.rid = tr.rid where u.uid=#{uid}
+    </select>
+    <select id="myFavorite" resultType="com.baidu.travel.domain.Route">
+        SELECT tr.* FROM tab_user u LEFT JOIN tab_favorite f ON u.uid = f.uid LEFT JOIN tab_route tr ON f.rid = tr.rid where u.uid=#{uid} limit #{start} ,#{pageSize}
+    </select>
+    <select id="findCountByRid" resultType="java.lang.Integer">
+        select count(*) from tab_favorite where rid=#{rid}
+    </select>
+    <select id="findByRidAndUid" resultType="com.baidu.travel.domain.Favorite">
+        select * from tab_favorite where rid=#{rid} and uid=#{uid}
+    </select>
+</mapper>
