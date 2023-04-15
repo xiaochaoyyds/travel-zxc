@@ -12,8 +12,13 @@ import java.io.IOException;
 @Service
 public class UserServiceImpl implements UserService {
 
+
     @Autowired
     private UserDao userDao;
+    @Override
+    public int updatePassWord(String newPassword, String username) {
+        return  userDao.updatePassWord(newPassword,username);
+    }
 
     @Override
     public boolean regist(User user) {

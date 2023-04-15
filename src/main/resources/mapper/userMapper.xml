@@ -11,6 +11,9 @@
     <update id="updateStatus" parameterType="com.baidu.travel.domain.User">
         update tab_user set status='Y' where uid=#{uid}
     </update>
+    <update id="updatePassWord">
+        update tab_user set password = #{newPassword} where username = #{username}
+    </update>
 
     <select id="FindByUsername" resultType="com.baidu.travel.domain.User">
         select * from tab_user where username=#{username}
